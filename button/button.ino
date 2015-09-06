@@ -10,12 +10,17 @@ int greenState1 = LOW;
 int greenState2 = LOW;
 int greenState3 = LOW;
 int lastButtonState = LOW;
-unsigned long currentMillis = NULL;
+
+boolean dot = false;
+boolean dash = false;
+
+int firstTime = 1;
+unsigned long startTime;
+unsigned long pressTime;
 
 
 int buttonState = 0;
-long previousMillis = 0;
-long T = 300;
+long T = 100;
 
 
 void setup() {
@@ -25,39 +30,60 @@ void setup() {
   pinMode(greenPin2, OUTPUT);
   pinMode(greenPin3, OUTPUT);
   pinMode(buttonPin, INPUT);
+  
 
 }
 
 void loop() {
-  buttonState = digitalRead(buttonPin);
-  
-  if ((buttonState == HIGH) && (lastButtonState == LOW)){
-    unsigned long currentMillis = millis();
-    digitalWrite(redPin, HIGH);
-    delay(500);
-    digitalWrite(redPin, LOW);
-    lastButtonState = HIGH;
+  if(digitalRead(buttonPin) == HIGH){
+ if(firstTime == 1){
+  startTime = millis();
+  firstTime=0;
+ }
+ 
+}
+else if(firstTime == 0){
+  pressTime = millis()- startTime;
+ firstTime = 1;
+}
+      
+ if (pressTime >= T && pressTime < 3*T) {
+  dot = true;
+  dash = false;
+  Serial.print("dot");
+  digitalWrite(redPin, HIGH);
+  digitalWrite(greenPin1, LOW); 
+  digitalWrite(greenPin2, LOW); 
+  digitalWrite(greenPin3, LOW);
+  delay(100); 
+  pressTime = 0;
+  } else if (pressTime >= 3*T) {
+      dot = false;
+      dash = true;
+      Serial.print("dash");
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin1, HIGH); 
+      digitalWrite(greenPin2, HIGH); 
+      digitalWrite(greenPin3, HIGH);
+      delay(100);
+      pressTime = 0;
     } else {
-      if (currentMillis != NULL ) {
-        previousMillis = currentMillis;
-      unsigned long currentMillis = millis();
-       }
-       lastButtonState = LOW;
+      dot = false;
+      dash = false;
+      Serial.print("nothing");
+      digitalWrite(redPin, LOW);
+      digitalWrite(greenPin1, LOW); 
+      digitalWrite(greenPin2, LOW); 
+      digitalWrite(greenPin3, LOW);
+      pressTime = 0;
       }
       
-   if (((currentMillis - previousMillis) >= T ) && ((currentMillis - previousMillis) < 3*T )){
-     digitalWrite(redPin, HIGH);
-     delay(500);
-     digitalWrite(redPin, LOW);
-    } 
   
   
   
     
-      
-  
-        
-     Serial.print(previousMillis);
-     Serial.print(currentMillis);
-     delay(1000);
+    
+    
+    
+    
 }
