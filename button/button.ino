@@ -12,8 +12,7 @@ int greenState3 = LOW;
 int lastButtonState = LOW;
 int count = 0;
 
-boolean dot = false;
-boolean dash = false;
+boolean pausePrinted = false;
 
 int firstTime = 1;
 unsigned long startTime;
@@ -49,15 +48,17 @@ void loop() {
 }
 else if(firstTime == 0){
   pressTime = millis()- startTime;
+  if (pressTime >= 10*T) {
+    Serial.print(5);
+    pressTime = 0;
+    }
   startPauseTime = millis();
  firstTime = 1;
 }
       
  if (pressTime >= T && pressTime < 3*T) {
-  dot = true;
-  results = results + "dot";
-  dash = false;
-  Serial.print("dot");
+  pausePrinted = false;
+  Serial.print(1);
   digitalWrite(redPin, HIGH);
   digitalWrite(greenPin1, LOW); 
   digitalWrite(greenPin2, LOW); 
@@ -65,10 +66,9 @@ else if(firstTime == 0){
   delay(100); 
   pressTime = 0;
   } else if (pressTime >= 3*T) {
-      dot = false;
-      dash = true;
+      pausePrinted = false;
       results = results + "dash";
-      Serial.print("dash");
+      Serial.print(2);
       digitalWrite(redPin, LOW);
       digitalWrite(greenPin1, HIGH); 
       digitalWrite(greenPin2, HIGH); 
@@ -82,32 +82,27 @@ else if(firstTime == 0){
       digitalWrite(greenPin2, LOW); 
       digitalWrite(greenPin3, LOW); }
       
-  if (pauseTime >= 7*T) {
-      dot = false;
-      dash = false;
-      results = results + "lp";
-      Serial.print("lPause");
+  if (pauseTime >= 8*T) {
+      Serial.print(4);
       digitalWrite(redPin, LOW);
       digitalWrite(greenPin1, LOW); 
       digitalWrite(greenPin2, LOW); 
       digitalWrite(greenPin3, HIGH);
       pressTime = 0;
       pauseTime = 0;
-      } else if (pauseTime >= 3*T && pauseTime < 7*T) {
-      dot = false;
-      dash = false;
-      results = results + "mp";
-      Serial.print("mPause");
+      } else if (pauseTime >= 5*T && pauseTime < 8*T) {
+      Serial.print(3);
       digitalWrite(redPin, LOW);
       digitalWrite(greenPin1, HIGH); 
       digitalWrite(greenPin2, LOW); 
       digitalWrite(greenPin3, LOW);
       pressTime = 0;
       pauseTime = 0; 
-      }
+      } 
+        
         
       
-  Serial.print(results);
+  
   
   
     
