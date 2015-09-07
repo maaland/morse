@@ -45,16 +45,16 @@ void loop() {
   firstTime=0;
  }
  
-}
+} 
 else if(firstTime == 0){
   pressTime = millis()- startTime;
   if (pressTime >= 10*T) {
     Serial.print(5);
     pressTime = 0;
     }
-  startPauseTime = millis();
+ startPauseTime = millis();
  firstTime = 1;
-}
+} 
       
  if (pressTime >= T && pressTime < 3*T) {
   pausePrinted = false;
@@ -65,6 +65,7 @@ else if(firstTime == 0){
   digitalWrite(greenPin3, LOW);
   delay(100); 
   pressTime = 0;
+  pauseTime = 0;
   } else if (pressTime >= 3*T) {
       pausePrinted = false;
       results = results + "dash";
@@ -82,16 +83,18 @@ else if(firstTime == 0){
       digitalWrite(greenPin2, LOW); 
       digitalWrite(greenPin3, LOW); }
       
-  if (pauseTime >= 8*T) {
+  if (pauseTime >= 8*T && pausePrinted == false) {
       Serial.print(4);
+      pausePrinted = true;
       digitalWrite(redPin, LOW);
       digitalWrite(greenPin1, LOW); 
       digitalWrite(greenPin2, LOW); 
       digitalWrite(greenPin3, HIGH);
       pressTime = 0;
       pauseTime = 0;
-      } else if (pauseTime >= 5*T && pauseTime < 8*T) {
+      } else if (pauseTime >= 5*T && pauseTime < 8*T && pausePrinted == false) {
       Serial.print(3);
+      pausePrinted = true;
       digitalWrite(redPin, LOW);
       digitalWrite(greenPin1, HIGH); 
       digitalWrite(greenPin2, LOW); 
