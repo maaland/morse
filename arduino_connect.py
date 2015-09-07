@@ -18,5 +18,5 @@ def pc_connect():
 #   The default will probably NOT work for your machine, but it may look quite similar (for Mac users), differing only
 #  in the final 4 digits.
 
-def basic_connect(arport='/dev/cu.usbmodem1411'):
+def basic_connect(arport='COM3'):
     return serial.Serial(arport,9600,timeout=.1)
