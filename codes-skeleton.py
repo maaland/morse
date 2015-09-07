@@ -14,6 +14,10 @@ _reset = 5
 
 # Morse Code Class
 class mocoder():
+    current_message= ""
+    current_word = ""
+    current_symbol = ""
+    serial_port = ""
 
 # Note: the codes for dot and dash coming to Python via the serial port are 1 and 2, respectively, since those were most
 # convenient at the Arduino level. However, I've switched to 0 and 1 in this dictionary, since it is a lot easier to
@@ -26,9 +30,9 @@ class mocoder():
                '00001':'4','00000':'5','10000':'6','11000':'7','11100':'8','11110':'9','11111':'0'}
 
 
-    def __init__(self,sport=True):
+    def __init__(self, sport=True):
         if sport:
-            self.serial_port = arduino_connect.basic_connect()
+            self.serial_port = arduino_connect.pc_connect()
         self.reset()
 
     def reset(self):
@@ -37,7 +41,7 @@ class mocoder():
         self.current_symbol = ''
 
     # This should receive an integer in range 1-4 from the Arduino via a serial port
-    def read_one_signal(self,port=None):
+    def read_one_signal(self, port=None):
         connection = port if port else self.serial_port
         while True:
             # Reads the input from the arduino serial connection
@@ -60,3 +64,37 @@ class mocoder():
                 self.process_signal(int(chr(s[1])))
             else:
                 self.process_signal(int(s))
+
+
+    def process_signal(self, signal):
+        if signal == _dot or signal == _dash:
+            self.update_current_symbol(signal)
+        elif signal == _symbol_pause:
+            self.handle_symbol_end()
+        elif signal == _word_pause:
+            self.handle_word_end()
+
+
+
+    def update_current_symbol(self, signal):
+        self.current_symbol.append(signal)
+
+    def update_current_word(self, symbol):
+        self.current_word.append(symbol)
+
+    def handle_symbol_end(self):
+        if self.current_symbol in self._morse_codes:
+            self.update_current_word(self._morse_codes.get(self.current_symbol))
+
+
+    def handle_word_end(self):
+        self.handle_symbol_end()
+        print(self.current_word)
+        self.current_word = ""
+
+
+
+
+
+
+
