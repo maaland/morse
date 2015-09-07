@@ -73,23 +73,37 @@ class mocoder():
             self.handle_symbol_end()
         elif signal == _word_pause:
             self.handle_word_end()
+        elif signal == _reset:
+            self.current_message = ''
+            self.current_word = ''
+            self.current_symbol = ''
+
 
 
 
     def update_current_symbol(self, signal):
-        self.current_symbol.append(signal)
+        self.current_symbol = self.current_symbol + str(signal)
 
     def update_current_word(self, symbol):
-        self.current_word.append(symbol)
+        self.current_word = self.current_word + str(symbol)
 
     def handle_symbol_end(self):
-        if self.current_symbol in self._morse_codes:
-            self.update_current_word(self._morse_codes.get(self.current_symbol))
+        signal = ""
+        for c in self.current_symbol:
+            signal = signal + str(int(c)-1)
+
+        if signal in self._morse_codes:
+            self.update_current_word(self._morse_codes.get(signal))
+            self.current_symbol = ""
+
+
 
 
     def handle_word_end(self):
         self.handle_symbol_end()
+        self.current_message = self.current_message + " " + self.current_word
         print(self.current_word)
+        print(self.current_message)
         self.current_word = ""
 
 
@@ -98,3 +112,6 @@ class mocoder():
 
 
 
+
+m = mocoder()
+print(m.decoding_loop())
